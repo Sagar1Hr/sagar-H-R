@@ -39,7 +39,7 @@ end$$
 
 
 
-DELIMITER //
+DELIMITER $$
 CREATE PROCEDURE hour_sum (IN AccountNumber INT, OUT dtotal numeric(10,2), OUT ctotal numeric(10,2))
 BEGIN
     SELECT sum(transactionAmt) INTO dtotal FROM account_update
@@ -47,7 +47,7 @@ BEGIN
     
     SELECT sum(transactionAmt) INTO ctotal FROM account_update
 	WHERE transactionType = 'credit' AND AccountNumber=AccountNumber AND changed_at >= Date_sub(now(),interval 1 hour);
-END //
+END $$
 
 
 DROP PROCEDURE hour_sum;
@@ -57,13 +57,3 @@ CALL hour_sum(1000101, @dtotal, @ctotal);
 
 
 SELECT @dtotal, @ctotal;
-
-
-CREATE EVENT triggerEvent
-    ON SCHEDULE EVERY 1 HOUR
-    DO
-      CALL hour_sum(1000101, @dtotal, @ctotal);
-      
-      
-DROP EVENT triggerEvent;
-
